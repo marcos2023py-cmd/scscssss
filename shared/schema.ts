@@ -38,6 +38,16 @@ export const orders = pgTable("orders", {
 export const insertOrderSchema = createInsertSchema(orders).omit({
   id: true,
   createdAt: true,
+}).extend({
+  items: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    price: z.number(),
+    quantity: z.number().positive(),
+    brand: z.string(),
+    model: z.string(),
+  })).min(1, "Cart must have at least one item"),
+  total: z.string().regex(/^\d+(\.\d{1,2})?$/, "Invalid total amount"),
 });
 
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
