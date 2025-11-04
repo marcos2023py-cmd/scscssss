@@ -229,15 +229,41 @@ export default function StorePage() {
   };
 
   const handleCheckoutSubmit = async (data: CheckoutData) => {
-    console.log("Checkout data:", data);
-    console.log("Cart items:", cartItems);
-    
     setIsLoading(true);
     
-    setTimeout(() => {
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const shipping = 5.99;
+    const total = subtotal + shipping;
+    
+    const checkoutData = {
+      ...data,
+      items: cartItems,
+      total: total.toString(),
+    };
+    
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkoutData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Checkout failed');
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      
       setIsLoading(false);
       setShowError(true);
-    }, 5000);
+    } catch (error) {
+      console.error('Checkout error:', error);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      setIsLoading(false);
+      setShowError(true);
+    }
   };
 
   const handleCloseError = () => {
