@@ -232,7 +232,7 @@ export default function StorePage() {
     setIsLoading(true);
     
     const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shipping = 5.99;
+    const shipping = 1.99;
     const total = subtotal + shipping;
     
     const checkoutData = {
